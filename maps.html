@@ -1,0 +1,114 @@
+<html>
+<head>
+<title>Google Maps API's</title>
+</head>
+<body>
+	<div id="map"></div>
+	<div class="location">
+
+
+		<script type="text/javascript"></script>
+		<script
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdjQxqdQBAmBTVLJwqAMo6gt6WxKGbftI&libraries=places&callback=initMap"
+			async defer></script>
+		<script>
+			
+		</script>
+		<div class="addressInput">
+			Find Location: <input type="text" id="addresstxt" /><br> <br>
+			<input type="submit" value="GetDetails"><br> 
+			<label id="result"></label><br> 
+			<label id="result2"></label><br>
+			<a href="homepage.php">Back</a>
+		</div>
+	</div>
+	<script>
+		var markersArray = [];		
+		function initMap() {
+			
+			google.maps.Map.prototype.clearOverlays = function() {
+				  for (var i = 0; i < markersArray.length; i++ ) {
+				    markersArray[i].setMap(null);
+				  }
+				  markersArray.length = 0;
+			}
+			
+			var mapData = {
+				zoom : 10,
+				center : {
+					lat : -37.8087455,
+					lng : 144.9670248
+				}
+			}
+
+			var mapView = new google.maps.Map(document.getElementById('map'),mapData);
+			var markerPosition = new google.maps.Marker({
+				position : {
+					lat : -37.8087455,
+					lng : 144.9670248
+				},
+				map : mapView
+			});
+			
+			markersArray.push(markerPosition);
+			google.maps.event.addListener(markerPosition,"click",function(){});
+			
+			var autocomplete = new google.maps.places.Autocomplete(document.getElementById('addresstxt'));
+			
+			google.maps.event.addListener(autocomplete, 'place_changed', function () {
+	            var place = autocomplete.getPlace();
+	            
+	            /*document.getElementById('result').innerHTML = place.geometry.location.lat();
+	            document.getElementById('result2').innerHTML = place.geometry.location.lng();*/
+	            
+	            mapView.clearOverlays();
+	            
+	            markerPosition = new google.maps.Marker({
+					position : {
+						lat : place.geometry.location.lat(),
+						lng : place.geometry.location.lng()
+					},
+					map : mapView
+				});
+	            
+	            mapView.setCenter(new google.maps.LatLng(place.geometry.location.lat(), place.geometry.location.lng()));
+	            
+        	});
+			
+			google.maps.event.addDomListener(window, 'load', initMap);
+		}
+
+		
+	</script>
+
+</body>
+<style>
+body {
+	background-color: #2980B9;
+}
+
+#map {
+	height: 400px;
+	width: 400px;
+	margin-left: 75px;
+	margin-top: 100px;
+	border: solid;
+	border-radius: 30px;
+}
+
+.location {
+	background: white;
+	height: 400px;
+	width: 350px;
+	margin-left: 600px;
+	margin-top: -410px;
+	border: solid;
+	border-radius: 30px;
+}
+
+.addressInput {
+	margin-left: 20px;
+	margin-top: 50px;
+}
+</style>
+</html>
